@@ -23,11 +23,40 @@ module.exports = function(app, db) {
 			}
 			else {
 				var id = results[0]['_id'];
+				var users = results[0]['users'];
+				users.push(req.body['user']);
+				var data = {
+					users: users
+				}
 				
-				Ping.update( {'_id' : id}, req.body, (err, result) => {
+				Ping.update( {'_id' : id}, data, (err, result) => {
 					if (err) {
 						console.log(err);
 						res.status(500).send( {"error" : err} );
+					}
+					else
+						res.send(result);
+				});
+			}
+		});
+	});
+	
+	app.delete('/ping', (req, res) => {
+		Ping.find({}, (err, results) => {
+			if (err) {
+				console.log(err);
+				res.status(500).send({"error": err});
+			}
+			else {
+				var id = results[0]['_id'];
+				var data = {
+					users: []
+				};
+				
+				Ping.update( {'_id' : id}, data, (err, result) => {
+					if (err) {
+						console.log(err);
+						res.status(500).send({"error": err});
 					}
 					else
 						res.send(result);
